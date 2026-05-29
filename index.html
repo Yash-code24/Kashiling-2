@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF9933">
+    <title>Kashiling Temple</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Samarkan&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen" class="active">
+        <div class="splash-content">
+            <i class="fa-solid fa-om splash-logo"></i>
+            <h1 class="splash-title">Kashiling</h1>
+            <p class="splash-subtitle">Divine Temple Management</p>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <!-- 2. TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <!-- 3. AUTHENTICATION MODULE -->
+    <div id="auth-view" class="view hidden">
+        <div class="auth-container glass-card">
+            <i class="fa-solid fa-gopuram auth-icon"></i>
+            <h2>Welcome to Kashiling</h2>
+            <p>Enter your mobile number to continue</p>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input type="tel" id="phone-input" placeholder="+91 98765 43210" maxlength="13">
+            </div>
+            
+            <button class="btn-primary" onclick="app.sendOTP()">Get OTP</button>
+            <button class="btn-text" onclick="app.loginAsGuest()">Continue as Guest</button>
+        </div>
+    </div>
+
+    <!-- 4. MAIN APP SHELL (Hidden until logged in) -->
+    <div id="main-app" class="hidden">
+        
+        <!-- Top Header -->
+        <header class="app-header glass-nav">
+            <div class="header-left">
+                <i class="fa-solid fa-om logo-icon"></i>
+                <span class="brand-name">Kashiling</span>
+            </div>
+            <div class="header-right">
+                <i class="fa-solid fa-bell notification-bell" onclick="app.showToast('No new notifications', 'info')"></i>
+                <div class="profile-avatar" onclick="app.navigate('profile')">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <main id="app-content">
+            
+            <!-- HOME / DEVOTEE DASHBOARD -->
+            <section id="view-home" class="page-view active">
+                
+                <!-- Greeting -->
+                <div class="greeting-section">
+                    <h2 id="user-greeting">Namaskaram, Devotee 🙏</h2>
+                    <p>Welcome to the divine abode.</p>
+                </div>
+
+                <!-- Live Darshan (YouTube Embed) -->
+                <div class="live-darshan-card glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-video text-danger"></i> Live Darshan</h3>
+                        <span class="live-badge pulse">LIVE</span>
+                    </div>
+                    <div class="video-container">
+                        <!-- Replace src with actual temple live stream -->
+                        <iframe src="https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Grid -->
+                <div class="quick-actions">
+                    <div class="action-btn glass-card" onclick="app.navigate('donate')">
+                        <div class="icon-circle bg-gold"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                        <span>Donate</span>
+                    </div>
+                    <div class="action-btn glass-card" onclick="app.navigate('pooja')">
+                        <div class="icon-circle bg-saffron"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                        <span>Book Pooja</span>
+                    </div>
+                    <div class="action-btn glass-card" onclick="app.navigate('prasad')">
+                        <div class="icon-circle bg-green"><i class="fa-solid fa-bowl-rice"></i></div>
+                        <span>Prasad</span>
+                    </div>
+                    <div class="action-btn glass-card" onclick="app.navigate('queue')">
+                        <div class="icon-circle bg-blue"><i class="fa-solid fa-ticket"></i></div>
+                        <span>Darshan Token</span>
+                    </div>
+                </div>
+
+                <!-- Daily Quote -->
+                <div class="quote-card glass-card mt-20">
+                    <i class="fa-solid fa-quote-left quote-icon"></i>
+                    <p id="daily-shloka">"Om Namah Shivaya. May the divine grace bring peace to your mind and soul."</p>
+                </div>
+            </section>
+
+            <!-- PLACEHOLDERS FOR OTHER VIEWS (To be built in Part 2 & 3) -->
+            <!-- ========================================== -->
+            <!-- 💰 DONATION SYSTEM VIEW                    -->
+            <!-- ========================================== -->
+            <section id="view-donate" class="page-view hidden">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-hand-holding-dollar text-gold"></i> E-Hundi & Donations</h2>
+                    <p>Your contribution supports temple maintenance and Annadanam.</p>
+                </div>
+
+                <!-- Donation Categories -->
+                <div class="donation-categories glass-card mt-20">
+                    <h3>Select Cause</h3>
+                    <div class="category-grid" id="donation-categories">
+                        <div class="category-pill active" onclick="app.selectCategory(this, 'General')">General</div>
+                        <div class="category-pill" onclick="app.selectCategory(this, 'Annadanam')">Annadanam</div>
+                        <div class="category-pill" onclick="app.selectCategory(this, 'Gau Seva')">Gau Seva</div>
+                        <div class="category-pill" onclick="app.selectCategory(this, 'Festival')">Festival Support</div>
+                    </div>
+                </div>
+
+                <!-- Amount Input -->
+                <div class="donation-amount glass-card mt-20">
+                    <div class="input-group">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                        <input type="number" id="donation-amount" placeholder="Enter Amount" min="10">
+                    </div>
+                    <div class="quick-amounts">
+                        <span onclick="document.getElementById('donation-amount').value = 101">₹101</span>
+                        <span onclick="document.getElementById('donation-amount').value = 501">₹501</span>
+                        <span onclick="document.getElementById('donation-amount').value = 1001">₹1001</span>
+                    </div>
+                </div>
+
+                <!-- Devotee Details -->
+                <div class="donation-details glass-card mt-20">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="donor-name" placeholder="Donor Name (Optional)">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" id="donor-city" placeholder="City (Optional)">
+                    </div>
+                </div>
+
+                <button class="btn-primary mt-20" onclick="app.processDonation()">Proceed to Donate</button>
+            </section>
+
+            <!-- QR Code Payment Modal (Hidden by default) -->
+            <div id="qr-modal" class="modal hidden">
+                <div class="modal-content glass-card text-center">
+                    <h3>Scan to Pay</h3>
+                    <p class="text-muted" id="qr-amount-display">Amount: ₹0</p>
+                    <div class="qr-container mt-20">
+                        <!-- Placeholder for Temple UPI QR -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=temple@upi&pn=KashilingTemple&am=0" id="upi-qr-image" alt="UPI QR Code">
+                    </div>
+                    <p class="mt-20 text-muted" style="font-size:12px;">Scan using GPay, PhonePe, or Paytm</p>
+                    <button class="btn-primary mt-20" onclick="app.confirmPayment()">I have Paid</button>
+                    <button class="btn-text" onclick="app.closeModal('qr-modal')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Receipt Modal -->
+            <div id="receipt-modal" class="modal hidden">
+                <div class="modal-content glass-card receipt-card text-center" id="receipt-content">
+                    <i class="fa-solid fa-circle-check text-success" style="font-size: 50px; color: #00C851;"></i>
+                    <h2 class="mt-20">Donation Successful</h2>
+                    <p>May Lord Shiva bless you!</p>
+                    <hr class="receipt-divider">
+                    <div class="receipt-details text-left">
+                        <p><strong>Receipt No:</strong> <span id="receipt-id"></span></p>
+                        <p><strong>Name:</strong> <span id="receipt-name"></span></p>
+                        <p><strong>Cause:</strong> <span id="receipt-cause"></span></p>
+                        <p><strong>Amount:</strong> ₹<span id="receipt-amount"></span></p>
+                        <p><strong>Date:</strong> <span id="receipt-date"></span></p>
+                    </div>
+                    <button class="btn-primary mt-20 no-print" onclick="window.print()">Download PDF</button>
+                    <button class="btn-text no-print" onclick="app.closeModal('receipt-modal'); app.navigate('home')">Back to Home</button>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 🛕 POOJA BOOKING SYSTEM VIEW               -->
+            <!-- ========================================== -->
+            <section id="view-pooja" class="page-view hidden">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-fire-flame-curved text-saffron"></i> Book a Pooja</h2>
+                    <p>Schedule divine rituals for your family.</p>
+                </div>
+
+                <div class="pooja-selection glass-card mt-20">
+                    <h3>Select Pooja</h3>
+                    <select id="pooja-type" class="custom-select mt-20">
+                        <option value="Rudrabhishek|501">Rudrabhishek - ₹501</option>
+                        <option value="Kumkum Archana|251">Kumkum Archana - ₹251</option>
+                        <option value="Vahan Pooja|1001">Vahan Pooja - ₹1001</option>
+                        <option value="Maha Aarti|101">Special Maha Aarti - ₹101</option>
+                    </select>
+                </div>
+
+                <div class="pooja-details glass-card mt-20">
+                    <h3>Booking Details</h3>
+                    <div class="input-group">
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="date" id="pooja-date" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="pooja-name" placeholder="Primary Devotee Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-om"></i>
+                        <input type="text" id="pooja-gotra" placeholder="Gotra (Optional)">
+                    </div>
+                </div>
+
+                <button class="btn-primary mt-20" onclick="app.bookPooja()">Confirm Booking</button>
+            </section>
+            
+            <section id="view-profile" class="page-view hidden"><h2>Devotee Profile (Coming Next)</h2></section>
+            
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-nav">
+            <div class="nav-item active" data-target="home" onclick="app.navigate('home')">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-target="pooja" onclick="app.navigate('pooja')">
+                <i class="fa-solid fa-om"></i>
+                <span>Poojas</span>
+            </div>
+            <!-- Floating Action Button -->
+            <div class="nav-item fab-container" onclick="app.navigate('donate')">
+                <div class="fab pulse-gold">
+                    <i class="fa-solid fa-rupee-sign"></i>
+                </div>
+            </div>
+            <div class="nav-item" data-target="queue" onclick="app.navigate('queue')">
+                <i class="fa-solid fa-ticket"></i>
+                <span>Token</span>
+            </div>
+            <div class="nav-item" data-target="profile" onclick="app.navigate('profile')">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Firebase SDK (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // REPLACE WITH YOUR FREE TIER FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        // const app = initializeApp(firebaseConfig);
+        // const auth = getAuth(app);
+        // const db = getFirestore(app);
+        
+        // Expose to global window for our app.js to use later
+        window.firebaseDb = {}; // Mocked for now until config is added
+    </script>
+
+    <!-- Main App Logic -->
+    <script src="app.js"></script>
+</body>
+  </html>
